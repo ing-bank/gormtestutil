@@ -1,10 +1,11 @@
 package gormtestutil
 
 import (
-	"github.com/stretchr/testify/assert"
 	"sync"
 	"testing"
 	"time"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestEnsure_NilWaitGroupFails(t *testing.T) {

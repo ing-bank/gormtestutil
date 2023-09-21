@@ -1,9 +1,10 @@
 package gormtestutil
 
 import (
+	"testing"
+
 	"github.com/stretchr/testify/assert"
 	"gorm.io/gorm/clause"
-	"testing"
 )
 
 type A struct {

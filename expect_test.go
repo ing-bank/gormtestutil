@@ -2,11 +2,12 @@ package gormtestutil
 
 import (
 	"fmt"
-	"github.com/stretchr/testify/assert"
-	"gorm.io/gorm"
 	"sync"
 	"testing"
 	"time"
+
+	"github.com/stretchr/testify/assert"
+	"gorm.io/gorm"
 )
 
 // TestModel which gets created in TestCreated calls
@@ -17,12 +18,12 @@ func (tm TestModel) TableName() string {
 	return "test_models"
 }
 
-func setup() (t *testing.T, _ *gorm.DB, _ chan struct{}) {
+func setup() (*testing.T, *gorm.DB, chan struct{}) {
 	// Create testobject
 	testObject := new(testing.T)
 
 	// Get database
-	db := NewMemoryDatabase(t, WithoutForeignKeys())
+	db := NewMemoryDatabase(testObject, WithoutForeignKeys())
 
 	// Get channel to communicate async
 	c := make(chan struct{})

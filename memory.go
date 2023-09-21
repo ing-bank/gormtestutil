@@ -2,9 +2,10 @@ package gormtestutil
 
 import (
 	"fmt"
+	"testing"
+
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
-	"testing"
 )
 
 // sqliteConnectionString is used to create a named in-memory database that allows multiple clients
@@ -16,36 +17,40 @@ type MemoryDatabaseOption func(*memoryDbConfig)
 
 type memoryDbConfig struct {
 	name               string
-	debug              bool
 	disableForeignKeys bool
 	singularConnection bool
 }
 
+const memoryConnectionString = ":memory:"
+
 // NewMemoryDatabase returns a sqlite database that runs in-memory, allowing you to use a database
 // without a running instance. Multiple options can be passed to configure the database.
 func NewMemoryDatabase(t *testing.T, options ...MemoryDatabaseOption) *gorm.DB {
+	t.Helper()
+
 	config := &memoryDbConfig{}
 
 	for _, option := range options {
 		option(config)
 	}
 
-	connectionString := ":memory:"
+	connectionString := memoryConnectionString
 
 	if config.name != "" {
 		connectionString = fmt.Sprintf(sqliteConnectionString, config.name)
 	}
 
 	database, err := gorm.Open(sqlite.Open(connectionString), &gorm.Config{})
-
 	if err != nil {
 		t.Error(err)
+
 		return nil
 	}
 
 	if !config.disableForeignKeys {
 		if err := database.Exec("PRAGMA foreign_keys = ON;").Error; err != nil {
 			t.Error(err)
+
 			return nil
 		}
 	}

@@ -31,6 +31,7 @@ func EnsureCompletion(t *testing.T, wg *sync.WaitGroup, options ...EnsureOption)
 
 	if wg == nil {
 		t.Error("WithExpectation is nil")
+
 		return false
 	}
 
@@ -56,6 +57,7 @@ func EnsureCompletion(t *testing.T, wg *sync.WaitGroup, options ...EnsureOption)
 		return true
 	case <-time.After(config.timeout):
 		t.Errorf("tasks did not complete within: %v", config.timeout)
+
 		return false
 	}
 }

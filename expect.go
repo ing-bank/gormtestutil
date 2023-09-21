@@ -2,10 +2,11 @@ package gormtestutil
 
 import (
 	"fmt"
-	"gorm.io/gorm"
 	"reflect"
 	"sync"
 	"testing"
+
+	"gorm.io/gorm"
 )
 
 const (
@@ -41,18 +42,21 @@ func WithoutMaximum() ExpectOption {
 // ExpectCreated asserts that an insert statement has at least been executed on the model.
 func ExpectCreated(t *testing.T, database *gorm.DB, model any, options ...ExpectOption) *sync.WaitGroup {
 	t.Helper()
+
 	return expectHook(t, database, model, "create", options...)
 }
 
 // ExpectDeleted asserts that a delete statement has at least been executed on the model.
 func ExpectDeleted(t *testing.T, database *gorm.DB, model any, options ...ExpectOption) *sync.WaitGroup {
 	t.Helper()
+
 	return expectHook(t, database, model, "delete", options...)
 }
 
 // ExpectUpdated asserts that an update statement has at least been executed on the model.
 func ExpectUpdated(t *testing.T, database *gorm.DB, model any, options ...ExpectOption) *sync.WaitGroup {
 	t.Helper()
+
 	return expectHook(t, database, model, "update", options...)
 }
 
@@ -63,17 +67,21 @@ type expectConfig struct {
 }
 
 // expectHook asserts that a hook has at least been executed on the model.
+//
+//nolint:cyclop // Allowing it
 func expectHook(t *testing.T, database *gorm.DB, model any, hook string, options ...ExpectOption) *sync.WaitGroup {
 	t.Helper()
 
 	if database == nil {
 		t.Error("database cannot be nil")
+
 		return nil
 	}
 
 	kind := reflect.ValueOf(model).Kind()
 	if kind != reflect.Struct {
 		t.Error("model must be a struct")
+
 		return nil
 	}
 
@@ -95,48 +103,56 @@ func expectHook(t *testing.T, database *gorm.DB, model any, hook string, options
 	stmt := &gorm.Statement{DB: database}
 	if err := stmt.Parse(model); err != nil {
 		t.Error(err)
+
 		return nil
 	}
-	tableName := stmt.Table
 
 	var timesCalled int
 	assertHook := func(tx *gorm.DB) {
 		t.Helper()
 
-		if tx.Statement.Table == tableName {
-			timesCalled++
-			if timesCalled <= config.Times {
-				config.Expectation.Done()
-			} else {
-				message := fmt.Sprintf("%s hook asserts called %d times but called at least %d times\n", tableName, config.Times, timesCalled)
-				if config.Strict {
-					t.Errorf(message)
-				} else {
-					t.Log(message)
-				}
-				return
-			}
+		if tx.Statement.Table != stmt.Table {
+			return
 		}
+
+		timesCalled++
+		if timesCalled <= config.Times {
+			config.Expectation.Done()
+
+			return
+		}
+
+		message := fmt.Sprintf("%s hook asserts called %d times but called at least %d times\n", stmt.Table, config.Times, timesCalled)
+		if config.Strict {
+			t.Errorf(message)
+
+			return
+		}
+
+		t.Log(message)
 	}
 
-	hookName := fmt.Sprintf("assert_%s_%v", hook, tableName)
+	hookName := fmt.Sprintf("assert_%s_%v", hook, stmt.Table)
 	switch hook {
 	case "create":
 		gormHook := "gorm:after_create"
 		if err := database.Callback().Create().After(gormHook).Register(hookName, assertHook); err != nil {
 			t.Error(err)
+
 			return nil
 		}
 	case "delete":
 		gormHook := "gorm:after_delete"
 		if err := database.Callback().Delete().After(gormHook).Register(hookName, assertHook); err != nil {
 			t.Error(err)
+
 			return nil
 		}
 	case "update":
 		gormHook := "gorm:after_update"
 		if err := database.Callback().Update().After(gormHook).Register(hookName, assertHook); err != nil {
 			t.Error(err)
+
 			return nil
 		}
 	}
