@@ -62,8 +62,10 @@ func TestProductService_Create_CreatesProduct(t *testing.T) {
 ## 🚀 Development
 
 1. Clone the repository
-2. Run `make t` to run unit tests
-3. Run `make fmt` to format code
+2. Run `make tools` to install necessary tools
+3. Run `make t` to run unit tests
+4. Run `make fmt` to format code
+4. Run `make lint` to lint your code
 
 You can run `make` to see a list of useful commands.
 
