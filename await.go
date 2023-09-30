@@ -2,8 +2,9 @@ package gormtestutil
 
 import (
 	"sync"
-	"testing"
 	"time"
+
+	testingi "github.com/mitchellh/go-testing-interface"
 )
 
 const (
@@ -26,7 +27,7 @@ type ensureConfig struct {
 }
 
 // EnsureCompletion ensures that the waitgroup completes within a specified duration or else fails
-func EnsureCompletion(t *testing.T, wg *sync.WaitGroup, options ...EnsureOption) bool {
+func EnsureCompletion(t testingi.T, wg *sync.WaitGroup, options ...EnsureOption) bool {
 	t.Helper()
 
 	if wg == nil {
