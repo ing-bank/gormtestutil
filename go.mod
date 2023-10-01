@@ -3,6 +3,7 @@ module github.com/ing-bank/gormtestutil
 go 1.20
 
 require (
+	github.com/mitchellh/go-testing-interface v1.14.1
 	github.com/stretchr/testify v1.8.0
 	gorm.io/driver/sqlite v1.4.3
 	gorm.io/gorm v1.24.2

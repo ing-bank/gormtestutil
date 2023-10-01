@@ -2,7 +2,8 @@ package gormtestutil
 
 import (
 	"fmt"
-	"testing"
+
+	testingi "github.com/mitchellh/go-testing-interface"
 
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
@@ -25,7 +26,7 @@ const memoryConnectionString = ":memory:"
 
 // NewMemoryDatabase returns a sqlite database that runs in-memory, allowing you to use a database
 // without a running instance. Multiple options can be passed to configure the database.
-func NewMemoryDatabase(t *testing.T, options ...MemoryDatabaseOption) *gorm.DB {
+func NewMemoryDatabase(t testingi.T, options ...MemoryDatabaseOption) *gorm.DB {
 	t.Helper()
 
 	config := &memoryDbConfig{}

@@ -4,7 +4,8 @@ import (
 	"fmt"
 	"reflect"
 	"sync"
-	"testing"
+
+	testingi "github.com/mitchellh/go-testing-interface"
 
 	"gorm.io/gorm"
 )
@@ -40,21 +41,21 @@ func WithoutMaximum() ExpectOption {
 }
 
 // ExpectCreated asserts that an insert statement has at least been executed on the model.
-func ExpectCreated(t *testing.T, database *gorm.DB, model any, options ...ExpectOption) *sync.WaitGroup {
+func ExpectCreated(t testingi.T, database *gorm.DB, model any, options ...ExpectOption) *sync.WaitGroup {
 	t.Helper()
 
 	return expectHook(t, database, model, "create", options...)
 }
 
 // ExpectDeleted asserts that a delete statement has at least been executed on the model.
-func ExpectDeleted(t *testing.T, database *gorm.DB, model any, options ...ExpectOption) *sync.WaitGroup {
+func ExpectDeleted(t testingi.T, database *gorm.DB, model any, options ...ExpectOption) *sync.WaitGroup {
 	t.Helper()
 
 	return expectHook(t, database, model, "delete", options...)
 }
 
 // ExpectUpdated asserts that an update statement has at least been executed on the model.
-func ExpectUpdated(t *testing.T, database *gorm.DB, model any, options ...ExpectOption) *sync.WaitGroup {
+func ExpectUpdated(t testingi.T, database *gorm.DB, model any, options ...ExpectOption) *sync.WaitGroup {
 	t.Helper()
 
 	return expectHook(t, database, model, "update", options...)
@@ -69,7 +70,7 @@ type expectConfig struct {
 // expectHook asserts that a hook has at least been executed on the model.
 //
 //nolint:cyclop // Allowing it
-func expectHook(t *testing.T, database *gorm.DB, model any, hook string, options ...ExpectOption) *sync.WaitGroup {
+func expectHook(t testingi.T, database *gorm.DB, model any, hook string, options ...ExpectOption) *sync.WaitGroup {
 	t.Helper()
 
 	if database == nil {
